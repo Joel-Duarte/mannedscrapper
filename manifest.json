@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "MannedScrapper",
+  "version": "1.2",
+  "permissions": ["activeTab", "storage", "sidePanel", "scripting"],
+  "host_permissions": [
+    "<all_urls>",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "action": { "default_title": "Open MannedScrapper" },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
