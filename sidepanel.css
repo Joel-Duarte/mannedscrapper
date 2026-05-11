@@ -35,3 +35,15 @@ button:hover { background: #eee; }
 .drag-handle { cursor: grab; color: #888; font-size: 18px; user-select: none; }
 .card p { flex-grow: 1; margin: 0; font-size: 12px; color: #444; }
 .del-btn:hover { color: red; border-color: red; }
+
+.card, .group-box {
+    cursor: grab;
+}
+
+.card:active, .group-box:active {
+    cursor: grabbing;
+}
+
+.card button, .card input, .group-header input, .group-header button {
+    cursor: default;
+}

@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     new Sortable(stagingArea, {
         group: 'nested',
         animation: 150,
-        handle: '.drag-handle',
         onEnd: () => saveOrder()
     });
 
@@ -101,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
             const slots = div.querySelector('.group-slots');
             if (item.children) item.children.forEach(c => renderItemUI(c, slots));
-            new Sortable(slots, { group: 'nested', animation: 150, handle: '.drag-handle', onEnd: () => saveOrder() });
+            new Sortable(slots, { group: 'nested', animation: 150, onEnd: () => saveOrder() });
         } else {
             div.innerHTML = `
                 <span class="drag-handle">↕</span>
