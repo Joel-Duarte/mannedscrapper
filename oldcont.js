@@ -1,35 +1,28 @@
 let isSelectionMode = false;
 let highlightBox = null;
-let currentTarget = null;
+let currentTarget = null; 
 
 function getHighlightBox() {
     if (highlightBox) return highlightBox;
     highlightBox = document.createElement('div');
     Object.assign(highlightBox.style, {
-        position: 'absolute',
-        backgroundColor: 'rgba(26, 115, 232, 0.2)',
-        border: '2px solid #1a73e8',
-        pointerEvents: 'none',
-        zIndex: '2147483647',
-        display: 'none',
-        boxSizing: 'border-box',
-        transition: 'all 0.1s ease-out'
+        position: 'absolute', backgroundColor: 'rgba(26, 115, 232, 0.2)',
+        border: '2px solid #1a73e8', pointerEvents: 'none', zIndex: '2147483647', 
+        display: 'none', boxSizing: 'border-box'
     });
     document.body.appendChild(highlightBox);
     return highlightBox;
 }
 
 function updateHighlight(el) {
-    if (!el || el === document.body || el === document.documentElement) return;
-    
+    if (!el) return;
     currentTarget = el;
     const box = getHighlightBox();
     const rect = el.getBoundingClientRect();
-    
     box.style.display = 'block';
-    box.style.width = `${rect.width}px`;
+    box.style.width = `${rect.width}px`; 
     box.style.height = `${rect.height}px`;
-    box.style.top = `${rect.top + window.scrollY}px`;
+    box.style.top = `${rect.top + window.scrollY}px`; 
     box.style.left = `${rect.left + window.scrollX}px`;
 }
 
@@ -39,7 +32,7 @@ document.addEventListener('keydown', (e) => {
     if (e.key === "ArrowUp") {
         e.preventDefault();
         const parent = currentTarget.parentElement;
-        if (parent) updateHighlight(parent);
+        if (parent && parent !== document.body) updateHighlight(parent);
     } 
     else if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -49,10 +42,6 @@ document.addEventListener('keydown', (e) => {
     else if (e.key === "Enter") {
         e.preventDefault();
         saveSelection(currentTarget);
-        
-        const box = getHighlightBox();
-        box.style.backgroundColor = 'rgba(52, 168, 83, 0.4)';
-        setTimeout(() => { box.style.backgroundColor = 'rgba(26, 115, 232, 0.2)'; }, 200);
     }
 });
 
@@ -73,29 +62,35 @@ document.addEventListener('mouseover', (e) => {
 
 document.addEventListener('click', (e) => {
     if (!isSelectionMode) return;
-    e.preventDefault();
+    e.preventDefault(); 
     e.stopPropagation();
     saveSelection(currentTarget || e.target);
 }, true);
 
 function saveSelection(target) {
-    const links = Array.from(target.querySelectorAll('a, button[href]')).map(el => {
+    const foundLinks = [];
+    const checkAndAdd = (el) => {
         let href = el.getAttribute('href') || el.href;
-        if (href && !href.startsWith('http')) {
-            href = new URL(href, window.location.origin).href;
+        if (href) {
+            if (!href.startsWith('http')) href = new URL(href, window.location.origin).href;
+            if (!foundLinks.some(l => l.url === href)) {
+                foundLinks.push({
+                    text: el.innerText.trim() || el.getAttribute('aria-label') || "Link",
+                    url: href
+                });
+            }
         }
-        return {
-            text: el.innerText.trim() || el.title || "Link",
-            url: href
-        };
-    }).filter(l => l.url && l.url.startsWith('http'));
+    };
+
+    if (target.tagName === 'A' || target.tagName === 'BUTTON') checkAndAdd(target);
+    target.querySelectorAll('a[href], button[href]').forEach(checkAndAdd);
 
     chrome.runtime.sendMessage({
         type: "ELEMENT_SELECTED",
-        payload: {
-            text: target.innerText.trim(),
+        payload: { 
+            text: target.innerText.trim(), 
             tagName: target.tagName,
-            links: links,
+            links: foundLinks,
             metadata: {
                 source_url: window.location.href,
                 page_title: document.title,
@@ -103,4 +98,8 @@ function saveSelection(target) {
             }
         }
     });
+
+    const box = getHighlightBox();
+    box.style.backgroundColor = 'rgba(52, 168, 83, 0.4)';
+    setTimeout(() => { box.style.backgroundColor = 'rgba(26, 115, 232, 0.2)'; }, 200);
 }

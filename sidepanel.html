@@ -1,18 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>MannedScrapper Panel</title>
     <link rel="stylesheet" href="sidepanel.css">
-    <script src="libs/sortable.min.js"></script>
 </head>
 <body>
-    <div class="header">
-        <button id="toggle-mode">Selection Mode</button>
-        <button id="create-group-btn">+ Group</button>
-        <button id="clear-btn">Clear All</button>
+    <div class="panel-section">
+        <label class="section-label">URL Endpoint</label>
+        <input type="text" id="url-endpoint-url" placeholder="http://localhost:1223/url">
+        <button id="send-url-btn" class="url-btn">Send Current URL</button>
     </div>
-    <input type="text" id="endpoint-url" placeholder="http://localhost:1223">
+
+    <div class="panel-section">
+        <label class="section-label">Elements Endpoint</label>
+        <input type="text" id="elements-endpoint-url" placeholder="http://localhost:1223">
+        
+        <button id="toggle-mode" class="toggle-btn">Selection Mode</button>
+        
+        <div class="button-row">
+            <button id="create-group-btn" class="action-btn">New Group</button>
+            <button id="clear-btn" class="danger-btn">Clear All</button>
+        </div>
+    </div>
+
     <div id="staging-area"></div>
+
+    <script src="libs/Sortable.min.js"></script>
     <script src="sidepanel.js"></script>
 </body>
 </html>

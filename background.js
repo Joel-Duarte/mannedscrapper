@@ -11,13 +11,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 async function handleNewSelection(payload) {
     const { selections = [] } = await chrome.storage.session.get("selections");
-    const newItem = { id: self.crypto.randomUUID(), type: 'item', ...payload };
+    
+    const newItem = { 
+        id: self.crypto.randomUUID(), 
+        type: 'item', 
+        ...payload 
+    };
+    
     await chrome.storage.session.set({ selections: [...selections, newItem] });
+    
     chrome.runtime.sendMessage({ type: "REFRESH_UI" });
 }
 
 async function executeRequest(msg) {
-    console.log("🚀 Dispatching to:", msg.endpoint);
+    console.log("Dispatching to:", msg.endpoint);
     
     try {
         const response = await fetch(msg.endpoint, {
@@ -27,7 +34,7 @@ async function executeRequest(msg) {
         });
 
         if (response.ok) {
-            console.log("Success");
+            console.log("Post successful");
             const { selections = [] } = await chrome.storage.session.get("selections");
             const updated = removeRecursive(selections, msg.id);
             await chrome.storage.session.set({ selections: updated });
@@ -42,8 +49,10 @@ async function executeRequest(msg) {
 }
 
 function removeRecursive(list, id) {
-    return list.filter(item => item.id !== id).map(item => ({
-        ...item,
-        children: item.children ? removeRecursive(item.children, id) : []
-    }));
+    return list
+        .filter(item => item.id !== id)
+        .map(item => ({
+            ...item,
+            children: item.children ? removeRecursive(item.children, id) : []
+        }));
 }
