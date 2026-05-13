@@ -90,10 +90,19 @@ function saveSelection(target) {
         };
     }).filter(l => l.url && l.url.startsWith('http'));
 
+    const clone = target.cloneNode(true);
+    clone.querySelectorAll('a').forEach(link => link.remove());
+    
+    const cleanText = clone.innerText
+        .replace(/\\n/g, ' ')    
+        .replace(/\s+/g, ' ')     
+        .replace(/\\+/g, '')   
+        .trim();
+
     chrome.runtime.sendMessage({
         type: "ELEMENT_SELECTED",
         payload: {
-            text: target.innerText.trim(),
+            text: cleanText || "Selected Element",
             tagName: target.tagName,
             links: links,
             metadata: {
