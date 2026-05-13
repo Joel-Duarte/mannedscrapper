@@ -1,5 +1,5 @@
 # MannedScrapper
-Lil click and select scrapper to send data to custom endpoints
+Lil click and select scrapper extension for chromium based browsers to send data to custom endpoints
 
 Captured data is sent in a structured JSON format with link extraction and simple text cleaning:
 
